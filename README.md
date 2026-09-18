@@ -30,9 +30,11 @@ The access file should give the teaching team:
 4. the access requirement, such as “anyone with the link” or the RMIT account
    permission required.
 
-Do not put passwords, API keys or access tokens in this file.  The final URLs
-and naming fields are intentionally supplied at submission time because this
-local checkout does not have a remote repository or a shareable OneDrive URL.
+Do not put passwords, API keys or access tokens in this file.  The completed
+access note for this submission is
+`Access_s3825455_PG_group_1.txt`.  The public code URL is recorded there; the
+restricted OneDrive URL remains in the Canvas submission rather than being
+published in this repository.
 
 The representative sample is separate from the code repository and is supplied
 through the OneDrive/Canvas data submission.  The frozen working copy contains

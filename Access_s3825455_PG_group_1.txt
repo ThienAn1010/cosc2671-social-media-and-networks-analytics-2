@@ -1,0 +1,39 @@
+COSC2671 Social Media and Network Analytics 2
+Group 1 — Postgraduate
+
+Submitting student number: s3825455
+Team student numbers: s3825455, s3651471, s4199510, s4198464
+
+Code repository
+---------------
+Public GitHub repository:
+https://github.com/ThienAn1010/cosc2671-social-media-and-networks-analytics-2
+
+Use the latest commit on the `main` branch for marking.  The repository
+contains the Python source, notebooks, tests, configuration, requirements and
+README instructions.  It intentionally does not contain the restricted full
+data bundle.
+
+Frozen data bundle and representative sample
+---------------------------------------------
+The approved frozen data bundle is supplied through the OneDrive link recorded
+in the Canvas submission.  Sign in with the RMIT account permitted by that
+Canvas/OneDrive share.  Extract the bundle at the repository root before
+running the read-only checks in README.md.
+
+The same bundle contains the representative sample under `data/sample/`.
+The sample archive is below the 10 MB limit and contains the Reddit sample plus
+the YouTube documents, interactions and author-video tables needed to inspect
+the NLP and network schemas.  Keep the data share restricted; do not publish
+raw or restricted platform data in the public GitHub repository.
+
+Report and presentation
+-----------------------
+The assessed report and presentation are submitted separately through Canvas.
+They are not required to clone or test the public code repository.
+
+Access and credentials
+----------------------
+No password, API key, access token or private credential is stored in this
+file or in the public repository.  The teaching team should use the Canvas
+submission to open the restricted OneDrive data share and the report files.
