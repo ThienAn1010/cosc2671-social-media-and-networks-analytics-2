@@ -1,4 +1,13 @@
-"""Thin command entry point for the analysis workstreams."""
+"""Command-line entry point for the frozen-data analysis contracts.
+
+The command tree follows the workflow documented in the repository README:
+establish the scope and population contracts, validate descriptive and network
+artifacts, gate measurement-dependent hypotheses, and then validate the report
+bundle.  Commands that build or check artifacts require an explicit
+``--build`` or ``--check`` choice.  Hypotheses additionally expose
+``--execute`` once their prerequisites are ready; ``validation merge`` is the
+one direct coder-file merge operation.
+"""
 
 from __future__ import annotations
 
@@ -6,17 +15,24 @@ import argparse
 import json
 from typing import Sequence
 
-from src.analysis.populations import check_populations, write_population_manifest
-from src.analysis.predictions import build_predictions, check_predictions
-from src.analysis.scope import check_scope, write_scope_artifact
 from src.analysis.codebook import check_codebook, write_codebook_artifacts
 from src.analysis.descriptive import build_descriptive_artifacts, check_descriptive
 from src.analysis.extended import build_extended, check_extended
 from src.analysis.hypotheses import build_hypothesis_artifact, check_hypothesis, execute_hypothesis
-from src.analysis.measurement import build_evaluation, build_reserve_assessment, build_selection, check_evaluation, check_reserve_assessment, check_selection
+from src.analysis.measurement import (
+    build_evaluation,
+    build_reserve_assessment,
+    build_selection,
+    check_evaluation,
+    check_reserve_assessment,
+    check_selection,
+)
 from src.analysis.networks import build_network_artifacts, check_networks
-from src.analysis.robustness import build_robustness_artifacts, check_robustness
+from src.analysis.populations import check_populations, write_population_manifest
+from src.analysis.predictions import build_predictions, check_predictions
 from src.analysis.report import build_report_artifacts, check_report
+from src.analysis.robustness import build_robustness_artifacts, check_robustness
+from src.analysis.scope import check_scope, write_scope_artifact
 from src.analysis.structure import build_structure_artifacts, check_structure
 from src.analysis.temporal import build_temporal_artifacts, check_temporal
 from src.analysis.topics import build_topic_artifacts, check_topics
@@ -24,12 +40,16 @@ from src.analysis.validation import build_validation_artifacts, check_validation
 
 
 def _build_or_check(parser: argparse.ArgumentParser) -> None:
+    """Add the standard mutually exclusive read-only/write modes."""
+
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--check", action="store_true", help="validate existing artifacts without writing")
     group.add_argument("--build", action="store_true", help="explicitly build or refresh artifacts")
 
 
 def _hypothesis_mode(parser: argparse.ArgumentParser) -> None:
+    """Add check, prerequisite-build, and execution modes for a hypothesis."""
+
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--check", action="store_true", help="validate an existing hypothesis artifact without writing")
     group.add_argument("--build", action="store_true", help="write the prerequisite-gate artifact")
@@ -37,8 +57,16 @@ def _hypothesis_mode(parser: argparse.ArgumentParser) -> None:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(prog="python -m src.analysis.run")
+    """Build the command parser without reading or writing analysis artifacts."""
+
+    parser = argparse.ArgumentParser(
+        prog="python -m src.analysis.run",
+        description=__doc__,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
     commands = parser.add_subparsers(dest="command", required=True)
+
+    # Foundational contracts and descriptive artifacts.
     scope = commands.add_parser("scope", help="validate the core/extended scope contract")
     _build_or_check(scope)
     populations = commands.add_parser("populations", help="inventory frozen sources and population rules")
@@ -47,6 +75,9 @@ def build_parser() -> argparse.ArgumentParser:
     _build_or_check(codebook)
     descriptive = commands.add_parser("descriptive", help="build or validate label-independent descriptive artifacts")
     _build_or_check(descriptive)
+
+    # Network artifacts are split by the question they answer: edge tables,
+    # topology/roles, and observed temporal or cascade summaries.
     networks = commands.add_parser("networks", help="build and validate the frozen graph registry")
     network_commands = networks.add_subparsers(dest="network_command", required=True)
     network_build = network_commands.add_parser("build", help="build or validate graph edge tables")
@@ -55,6 +86,9 @@ def build_parser() -> argparse.ArgumentParser:
     _build_or_check(network_structure)
     network_temporal = network_commands.add_parser("temporal", help="validate observed cascade and temporal-community summaries")
     _build_or_check(network_temporal)
+
+    # Confirmatory hypotheses and approval-gated extensions are kept separate
+    # from descriptive and exploratory outputs.
     hypothesis = commands.add_parser("hypothesis", help="run or gate a frozen confirmatory hypothesis")
     hypothesis.add_argument("--id", required=True, choices=("H1", "H2", "H3", "H4"))
     hypothesis.add_argument("--platform", help="optional platform selector for the hypothesis endpoint")
@@ -72,6 +106,9 @@ def build_parser() -> argparse.ArgumentParser:
     _build_or_check(robustness)
     predictions = commands.add_parser("predictions", help="materialise frozen-corpus measurement labels after reserve validation")
     _build_or_check(predictions)
+
+    # Reporting and human-measurement lifecycle commands are last because they
+    # consume the contracts and artifacts established above.
     report = commands.add_parser("report", help="assemble and validate the final evidence/report bundle")
     _build_or_check(report)
     validation = commands.add_parser("validation", help="human-validation sampling and model gates")
@@ -92,7 +129,11 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def main(argv: Sequence[str] | None = None) -> int:
+    """Dispatch one explicit analysis command and return a shell status."""
+
     args = build_parser().parse_args(argv)
+
+    # Foundational contracts and label-independent artifacts.
     if args.command == "scope":
         if args.build:
             print(json.dumps({"status": "built", "artifact": str(write_scope_artifact())}, sort_keys=True))
@@ -108,6 +149,8 @@ def main(argv: Sequence[str] | None = None) -> int:
     if args.command == "descriptive":
         print(json.dumps(build_descriptive_artifacts() if args.build else check_descriptive(), sort_keys=True))
         return 0
+
+    # Network artifacts, from interaction tables through structure and time.
     if args.command == "networks" and args.network_command == "build":
         print(json.dumps(build_network_artifacts() if args.build else check_networks(), sort_keys=True))
         return 0
@@ -117,6 +160,8 @@ def main(argv: Sequence[str] | None = None) -> int:
     if args.command == "networks" and args.network_command == "temporal":
         print(json.dumps(build_temporal_artifacts() if args.build else check_temporal(), sort_keys=True))
         return 0
+
+    # Hypotheses, topics, approval-gated extensions, and robustness.
     if args.command == "hypothesis":
         if args.build:
             print(json.dumps(build_hypothesis_artifact(args.id, args.platform, args.outcome), sort_keys=True))
@@ -140,6 +185,9 @@ def main(argv: Sequence[str] | None = None) -> int:
     if args.command == "report":
         print(json.dumps(build_report_artifacts() if args.build else check_report(), sort_keys=True))
         return 0
+
+    # Human-measurement lifecycle.  ``merge`` deliberately has no build/check
+    # switch because it combines already-produced coder files only.
     if args.command == "validation" and args.validation_command == "sample":
         print(json.dumps(build_validation_artifacts(args.revision) if args.build else check_validation_samples(args.revision), sort_keys=True))
         return 0

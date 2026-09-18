@@ -2,6 +2,14 @@
 # Student ID: s3825455
 # Assignment 1 - Social Media and Networks Analytics
 
+"""Shared text cleaning and enrichment for the Reddit preparation pipeline.
+
+The functions here produce separate light, sentiment, and topic views, then
+add language, emoji, sentiment, relevance, and topic metadata while retaining
+exclusion diagnostics.  Record assembly and schema validation live in
+:mod:`src.prepare_corpus_records`.
+"""
+
 from __future__ import annotations
 
 import hashlib

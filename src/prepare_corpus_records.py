@@ -2,6 +2,14 @@
 # Student ID: s3825455
 # Assignment 1 - Social Media and Networks Analytics
 
+"""Build validated, anonymised Reddit records for the processed data layer.
+
+The preparation entry point uses these helpers to parse collector JSONL,
+preserve explicit exclusion and quality flags, enforce the fixed schema, and
+write Parquet/CSV outputs with a reproducibility manifest.  Text cleaning and
+enrichment live in :mod:`src.prepare_corpus_text`.
+"""
+
 from __future__ import annotations
 
 import csv

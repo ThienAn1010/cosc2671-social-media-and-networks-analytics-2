@@ -13,6 +13,44 @@ Start with the [project proposal](docs/age_gate_paradox_project_proposal.md) for
 | Dang Quoc Hung | s4199510 |
 | Bui Thanh Duy | s4198464 |
 
+## Submission naming, access, and representative sample
+
+The Canvas code submission must use the teaching team's naming convention:
+`student_number_PG_or_UG_group_number` for the repository, compressed folder,
+or notebook filename.  Add a plain-text file at its root named
+`Access_student_number_PG_or_UG_group_number.txt`.  Replace the placeholders
+with the exact student number, course level and group number; do not submit the
+placeholder text literally.
+
+The access file should give the teaching team:
+
+1. the code-repository URL and the commit or branch to mark;
+2. the OneDrive URL for the approved frozen data bundle and representative sample;
+3. the Canvas location of the report and presentation; and
+4. the access requirement, such as “anyone with the link” or the RMIT account
+   permission required.
+
+Do not put passwords, API keys or access tokens in this file.  The final URLs
+and naming fields are intentionally supplied at submission time because this
+local checkout does not have a remote repository or a shareable OneDrive URL.
+
+The representative sample is separate from the code repository and is supplied
+through the OneDrive/Canvas data submission.  The frozen working copy contains
+`data/sample/` at approximately 3.9 MB, below the 10 MB limit:
+
+- `reddit_age_gate_sample.csv` — Reddit text-analysis fields, eligibility flags
+  and relabelled network-node fields;
+- `youtube/documents_sample.csv` — pseudonymised videos, comments and replies
+  with the text fields needed to show the NLP schema;
+- `youtube/interactions_sample.csv` — directed reply edges; and
+- `youtube/author_video_sample.csv` — commenter-to-video network counts.
+
+The sample is sufficient to inspect both the relational and text-analysis
+schema, but it is not a volume-representative estimate.  The full dataset is
+not placed in Git because it exceeds the sample limit and contains restricted
+platform data; the accompanying README in the data bundle records the size,
+privacy and platform-retention reasons.
+
 ## Read this first
 
 The checkout is frozen for submission. The full test suite passed with `320 passed` on 18 September 2026. The descriptive report bundle and fallback evidence bundle validate successfully. The confirmatory measurement lifecycle remains deliberately gated, so a blocked endpoint is not a null result.
@@ -341,12 +379,15 @@ The assessed report and presentation are submitted through Canvas, not this code
 Before creating the hand-in archive:
 
 1. Include the tracked source, configuration, documentation and tests in the code repository.
-2. Download the approved frozen data bundle from OneDrive using the link recorded in the Canvas submission.
-3. Submit the repository link, report, presentation and OneDrive data-bundle reference through Canvas.
-4. Keep `data/raw/`, `.venv/`, `.env` and credentials out of the Git repository and public links.
-5. Run `.venv/bin/python -m pytest tests -q` and record the result.
-6. Run the read-only core validators and retain their JSON output with the submission notes.
-7. Confirm that `data/analysis/report/report_manifest.json` and `data/analysis/fallback/analysis_manifest.json` still validate after extracting the OneDrive bundle.
-8. Explain any unavailable or blocked endpoint as a deliberate evidence boundary, never as a successful null result.
+2. Rename the repository/archive using `student_number_PG_or_UG_group_number`.
+3. Add `Access_student_number_PG_or_UG_group_number.txt` with the final repository, OneDrive and Canvas access details.
+4. Download the approved frozen data bundle from OneDrive using the link recorded in the Canvas submission.
+5. Confirm that `data/sample/` is included in the accompanying data submission and remains below 10 MB.
+6. Submit the repository link, report, presentation and OneDrive data-bundle reference through Canvas.
+7. Keep `data/raw/`, `.venv/`, `.env` and credentials out of the Git repository and public links.
+8. Run `.venv/bin/python -m pytest tests -q` and record the result.
+9. Run the read-only core validators and retain their JSON output with the submission notes.
+10. Confirm that `data/analysis/report/report_manifest.json` and `data/analysis/fallback/analysis_manifest.json` still validate after extracting the OneDrive bundle.
+11. Explain any unavailable or blocked endpoint as a deliberate evidence boundary, never as a successful null result.
 
 The data-handling and retention rules in [docs/data_handling.md](docs/data_handling.md) apply after submission. Do not publicly upload raw or processed social-media data.
