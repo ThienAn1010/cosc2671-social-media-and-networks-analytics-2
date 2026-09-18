@@ -1,0 +1,317 @@
+<title>__TITLE__</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap">
+__STYLE__
+<style>
+.cmp{border:1px solid var(--rule); border-radius:10px; background:var(--surface); padding:14px; margin-top:14px}
+.cmp h3{margin:0 0 10px; font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); font-weight:600}
+.pair{display:grid; grid-template-columns:1fr 1fr; gap:8px}
+.pick{font:inherit; font-size:14px; text-align:left; cursor:pointer; border:1px solid var(--rule); border-radius:8px; background:var(--surface); color:var(--ink); padding:9px 11px; min-height:48px; line-height:1.3; overflow-wrap:anywhere}
+.pick small{display:block; font-family:var(--mono); font-size:10.5px; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); margin-bottom:3px}
+.pick:hover{background:var(--surface-2)}
+.pick[aria-pressed="true"]{border-color:var(--accent); background:var(--chip-bg); box-shadow:inset 0 0 0 1px var(--accent)}
+.pick:focus-visible,.chip:focus-visible,select:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+.other{margin-top:8px; display:flex; flex-wrap:wrap; gap:6px; align-items:center; font-size:13px; color:var(--muted)}
+.chip{font:inherit; font-size:12.5px; cursor:pointer; border:1px solid var(--rule); border-radius:99px; background:var(--surface); color:var(--ink); padding:5px 10px}
+.chip[aria-pressed="true"]{border-color:var(--accent); background:var(--chip-bg); color:var(--ink); box-shadow:inset 0 0 0 1px var(--accent)}
+select{font:inherit; font-size:13px; padding:6px 8px; border-radius:8px; border:1px solid var(--rule); background:var(--surface); color:var(--ink)}
+.chosen{font-family:var(--mono); font-size:11.5px; color:var(--ok); margin-top:6px; min-height:15px; overflow-wrap:anywhere}
+.filter{display:flex; gap:8px; align-items:center; font-size:13px; color:var(--muted); margin-top:8px}
+@media (max-width:460px){.pair{grid-template-columns:1fr}}
+</style>
+
+<div class="wrap">
+  <section id="start">
+    <div class="panel">
+      <h1 id="title"></h1>
+      <p class="sub" id="subtitle"></p>
+      <div class="facts" id="facts"></div>
+      <div id="rule" class="note"></div>
+      <p class="note" id="storeNote"></p>
+      <div class="nav"><button class="btn primary" id="begin" type="button">Start settling</button></div>
+      <div class="save" id="startSave"></div>
+    </div>
+  </section>
+
+  <section id="code" hidden>
+    <div class="rail">
+      <div class="rail-top"><span class="rail-name" id="who"></span><span class="rail-count" id="count"></span></div>
+      <div class="bar"><span id="barFill" style="width:0%"></span></div>
+      <label class="filter"><input type="checkbox" id="onlyOpen"> Skip items already settled</label>
+    </div>
+    <article class="specimen">
+      <p class="eyebrow" id="eyebrow"></p>
+      <div id="rootBox" class="ctx"><b id="rootLabel">Thread opening</b><span id="rootText"></span></div>
+      <div id="parentBox" class="ctx"><b>Replying to</b><span id="parentText"></span></div>
+      <p class="main-label" id="mainLabel">Settle this</p>
+      <p class="main-text" id="mainText"></p>
+    </article>
+    <div id="fields"></div>
+    <div class="nav">
+      <button class="btn ghost" id="prev" type="button" aria-label="Previous item">←</button>
+      <button class="btn primary" id="next" type="button">Next</button>
+      <button class="btn ghost" id="toSummary" type="button">Save and pause</button>
+    </div>
+    <div class="need" id="need" role="status"></div>
+    <div class="save" id="saveMsg"></div>
+  </section>
+
+  <section id="done" hidden>
+    <div class="panel">
+      <h1 id="doneTitle"></h1>
+      <p class="sub" id="doneSub"></p>
+      <div class="jump" id="jump"></div>
+      <div class="nav">
+        <button class="btn primary" id="download" type="button">Download decisions (CSV)</button>
+        <button class="btn" id="back" type="button">Back to settling</button>
+      </div>
+      <div class="nav">
+        <button class="btn" id="restore" type="button">Restore from a CSV</button>
+        <input class="file" type="file" id="restoreFile" accept=".csv,text/csv">
+      </div>
+      <p class="save" id="doneMsg"></p>
+      <p class="note" id="returnNote"></p>
+    </div>
+  </section>
+</div>
+
+<script>
+const CONFIG = __CONFIG__;
+const ITEMS = __ITEMS__;
+const FRAMES = [
+  ["policy_assurance", "Policy"], ["child_safety", "Child safety"], ["privacy_surveillance", "Privacy"],
+  ["governance_platform_responsibility", "Governance"], ["circumvention_censorship_autonomy", "Circumvention"]
+];
+const VALUES = {
+  relevance: ["relevant", "adjacent_contextual", "irrelevant"],
+  language: ["english", "mixed", "non_english", "too_short_ambiguous"],
+  target_policy: ["UK_OSA", "AU_SOCIAL_MINIMUM_AGE", "OTHER_EXTENDED_EVENT", "multiple", "unclear"],
+  thread_relevant: ["yes", "no"]
+};
+const NAMES = {relevance:"Relevance", language:"Language", target_policy:"Policy discussed", frame_labels:"Frames", thread_relevant:"Thread about age checks?"};
+const $ = id => document.getElementById(id);
+let idx = 0, decisions = {}, dbDoc = null, timer = null, dbState = "connecting", downloads = null;
+
+$("title").textContent = CONFIG.title; document.title = CONFIG.title;
+$("subtitle").textContent = CONFIG.subtitle;
+$("rule").textContent = CONFIG.rule || "";
+$("returnNote").textContent = CONFIG.returnNote;
+const total = ITEMS.reduce((n, it) => n + it.d.length, 0);
+[[String(ITEMS.length), "items"], [String(total), "decisions"], [CONFIG.estimate, "estimate"]].forEach(([v, k]) => {
+  const d = document.createElement("div"); d.className = "fact";
+  const b = document.createElement("b"); b.textContent = v; const s = document.createElement("span"); s.textContent = k;
+  d.append(b, s); $("facts").appendChild(d);
+});
+
+const LS = "settle:" + CONFIG.store;
+function lsSave(){ try{ localStorage.setItem(LS, JSON.stringify({decisions, idx})); }catch(e){} }
+try{ const s = JSON.parse(localStorage.getItem(LS) || "null"); if(s){ decisions = s.decisions || {}; idx = Math.min(s.idx || 0, ITEMS.length - 1); } }catch(e){}
+const hosted = !!(window.claude && typeof window.claude.use === "function");
+const dbReady = (async () => {
+  if(!hosted){ dbState = "local"; return null; }
+  try{
+    const db = await window.claude.use("db");
+    dbState = db ? "ready" : "local";
+    try{ downloads = await window.claude.use("downloads"); }catch(e){}
+    if(db){
+      dbDoc = db.doc("settle/" + CONFIG.store);
+      const snap = await dbDoc.get();
+      const remote = snap.exists ? snap.data() : null;
+      if(remote && remote.decisions){
+        for(const [id, fields] of Object.entries(remote.decisions)){
+          decisions[id] = Object.assign({}, fields, decisions[id] || {});
+        }
+        lsSave();
+        if(!$("code").hidden) paint();
+        startHint();
+      }
+    }
+    return db;
+  }catch(e){ dbState = "local"; return null; }
+})();
+$("storeNote").textContent = hosted
+  ? "Decisions save as you go and sync to this page, so you can stop and continue on any device."
+  : "Decisions save in this browser. Download the CSV at the end of every session as a backup.";
+
+function done(){ return ITEMS.reduce((n, it) => n + it.d.filter(f => decisions[it.id] && decisions[it.id][f] !== undefined).length, 0); }
+function itemDone(it){ return it.d.every(f => decisions[it.id] && decisions[it.id][f] !== undefined); }
+function flag(msg){ $("saveMsg").textContent = msg || (dbState === "ready" ? "saved and synced" : "saved in this browser"); }
+function persist(){
+  lsSave(); flag();
+  clearTimeout(timer);
+  timer = setTimeout(async () => {
+    const db = await dbReady;
+    if(!db || !dbDoc) return;
+    try{ await dbDoc.set({decisions, settled: done(), total, updated: new Date().toISOString()}); }catch(e){}
+  }, 1000);
+}
+function setDecision(id, field, value){
+  decisions[id] = decisions[id] || {};
+  decisions[id][field] = value;
+  persist(); paint();
+}
+function pretty(field, value){
+  if(field === "frame_labels"){
+    if(!value) return "No frame";
+    const names = Object.fromEntries(FRAMES);
+    return value.split("|").map(v => names[v] || v).join(", ");
+  }
+  return value || "(blank)";
+}
+function frameValue(set){ return FRAMES.map(f => f[0]).filter(k => set.has(k)).join("|"); }
+
+function paint(){
+  const it = ITEMS[idx];
+  $("eyebrow").textContent = it.id + (it.s ? " · " + it.s : "");
+  const root = it.r || "", parent = it.p || "";
+  const threads = CONFIG.kind === "threads";
+  $("rootBox").hidden = threads || !root || root === it.t;
+  $("rootLabel").textContent = CONFIG.rootLabel || "Thread opening";
+  $("rootText").textContent = root;
+  $("parentBox").hidden = threads || !parent || parent === root;
+  $("parentText").textContent = parent;
+  $("mainLabel").textContent = threads ? "Thread title and opening" : "Settle this";
+  $("mainText").textContent = it.t || "(no text)";
+  $("count").textContent = (idx + 1) + " / " + ITEMS.length + " · " + done() + " of " + total + " decisions";
+  $("barFill").style.width = (100 * done() / total) + "%";
+  const host = $("fields"); host.innerHTML = "";
+  const mine = decisions[it.id] || {};
+  it.d.forEach(field => {
+    const box = document.createElement("div"); box.className = "cmp";
+    const h = document.createElement("h3"); h.textContent = NAMES[field] || field; box.appendChild(h);
+    const pair = document.createElement("div"); pair.className = "pair";
+    [["a", CONFIG.nameA], ["b", CONFIG.nameB]].forEach(([side, label]) => {
+      const value = it[side][field];
+      const b = document.createElement("button"); b.type = "button"; b.className = "pick";
+      const s = document.createElement("small"); s.textContent = label; b.appendChild(s);
+      b.appendChild(document.createTextNode(pretty(field, value)));
+      b.setAttribute("aria-pressed", String(mine[field] !== undefined && mine[field] === value));
+      b.addEventListener("click", () => setDecision(it.id, field, value));
+      pair.appendChild(b);
+    });
+    box.appendChild(pair);
+    const other = document.createElement("div"); other.className = "other";
+    other.appendChild(document.createTextNode("Or set it yourself:"));
+    if(field === "frame_labels"){
+      const current = new Set((mine[field] !== undefined ? mine[field] : "").split("|").filter(Boolean));
+      FRAMES.forEach(([key, name]) => {
+        const c = document.createElement("button"); c.type = "button"; c.className = "chip"; c.textContent = name;
+        c.setAttribute("aria-pressed", String(mine[field] !== undefined && current.has(key)));
+        c.addEventListener("click", () => {
+          const next = new Set(mine[field] !== undefined ? current : []);
+          if(next.has(key)) next.delete(key); else next.add(key);
+          setDecision(it.id, field, frameValue(next));
+        });
+        other.appendChild(c);
+      });
+      const none = document.createElement("button"); none.type = "button"; none.className = "chip"; none.textContent = "No frame";
+      none.setAttribute("aria-pressed", String(mine[field] === ""));
+      none.addEventListener("click", () => setDecision(it.id, field, ""));
+      other.appendChild(none);
+    } else {
+      const sel = document.createElement("select");
+      sel.setAttribute("aria-label", "Set " + (NAMES[field] || field));
+      const blank = document.createElement("option"); blank.value = "__"; blank.textContent = "choose…"; sel.appendChild(blank);
+      (VALUES[field] || []).forEach(v => { const o = document.createElement("option"); o.value = v; o.textContent = v; sel.appendChild(o); });
+      sel.value = mine[field] !== undefined ? mine[field] : "__";
+      sel.addEventListener("change", () => { if(sel.value !== "__") setDecision(it.id, field, sel.value); });
+      other.appendChild(sel);
+    }
+    box.appendChild(other);
+    const chosen = document.createElement("div"); chosen.className = "chosen";
+    chosen.textContent = mine[field] !== undefined ? "Settled: " + pretty(field, mine[field]) : "";
+    box.appendChild(chosen);
+    host.appendChild(box);
+  });
+  $("prev").disabled = idx === 0;
+  $("next").textContent = idx === ITEMS.length - 1 ? "Finish" : "Next";
+  $("need").textContent = "";
+}
+function move(step){
+  let next = idx + step;
+  if($("onlyOpen").checked){ while(next >= 0 && next < ITEMS.length && itemDone(ITEMS[next])) next += step; }
+  if(next >= ITEMS.length){ showDone(); return; }
+  if(next < 0) return;
+  idx = next; lsSave(); paint(); window.scrollTo(0, 0);
+}
+function csvCell(v){ v = String(v == null ? "" : v); return /[",\n\r]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; }
+function toCsv(){
+  const rows = [["item_id", "field", "value"].join(",")];
+  ITEMS.forEach(it => it.d.forEach(f => { if(decisions[it.id] && decisions[it.id][f] !== undefined) rows.push([it.id, f, decisions[it.id][f]].map(csvCell).join(",")); }));
+  return rows.join("\r\n") + "\r\n";
+}
+function parseCsv(text){
+  const rows = []; let row = [], cell = "", q = false;
+  for(let i = 0; i < text.length; i++){
+    const ch = text[i];
+    if(q){ if(ch === '"'){ if(text[i + 1] === '"'){ cell += '"'; i++; } else q = false; } else cell += ch; }
+    else if(ch === '"') q = true;
+    else if(ch === ","){ row.push(cell); cell = ""; }
+    else if(ch === "\n" || ch === "\r"){ if(ch === "\r" && text[i + 1] === "\n") i++; row.push(cell); rows.push(row); row = []; cell = ""; }
+    else cell += ch;
+  }
+  if(cell || row.length){ row.push(cell); rows.push(row); }
+  return rows.filter(r => r.some(v => v !== ""));
+}
+function showDone(){
+  $("code").hidden = true; $("done").hidden = false;
+  const open = ITEMS.filter(it => !itemDone(it));
+  $("doneTitle").textContent = open.length ? open.length + " items still to settle" : "All " + ITEMS.length + " items settled";
+  $("doneSub").textContent = open.length ? "Tap an id to go back to it." : (hosted ? "Your decisions are saved to this page. Tell Claude you've finished." : "Download the decisions and send them on.");
+  $("jump").innerHTML = "";
+  open.slice(0, 400).forEach(it => {
+    const b = document.createElement("button"); b.type = "button"; b.textContent = it.id;
+    b.addEventListener("click", () => { idx = ITEMS.indexOf(it); $("done").hidden = true; $("code").hidden = false; paint(); window.scrollTo(0, 0); });
+    $("jump").appendChild(b);
+  });
+  persist(); window.scrollTo(0, 0);
+}
+async function download(){
+  const csv = toCsv(), name = CONFIG.store + "_decisions.csv";
+  if(hosted){
+    await dbReady;
+    if(downloads){ try{ await downloads.save({filename:name, data:csv}); $("doneMsg").textContent = "Download offered."; }catch(e){ $("doneMsg").textContent = "Download was declined. Your decisions are still saved to this page."; } return; }
+    $("doneMsg").textContent = "Downloads aren't available here; your decisions are saved to this page."; return;
+  }
+  const url = URL.createObjectURL(new Blob(["﻿" + csv], {type:"text/csv"}));
+  const a = document.createElement("a"); a.href = url; a.download = name;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 4000);
+  $("doneMsg").textContent = "Saved " + name + " to your downloads folder.";
+}
+function startHint(){
+  const n = done();
+  $("begin").textContent = n ? "Resume settling" : "Start settling";
+  $("startSave").textContent = n ? n + " of " + total + " decisions already made." : "";
+}
+startHint();
+$("who").textContent = CONFIG.short;
+$("begin").addEventListener("click", () => { $("start").hidden = true; $("code").hidden = false; paint(); flag(); });
+$("next").addEventListener("click", () => {
+  const it = ITEMS[idx];
+  if(!itemDone(it)){ $("need").textContent = "Settle every field on this item first, or use Save and pause."; return; }
+  move(1);
+});
+$("prev").addEventListener("click", () => move(-1));
+$("toSummary").addEventListener("click", showDone);
+$("back").addEventListener("click", () => { $("done").hidden = true; $("code").hidden = false; paint(); });
+$("download").addEventListener("click", download);
+$("restore").addEventListener("click", () => $("restoreFile").click());
+$("restoreFile").addEventListener("change", async e => {
+  const file = e.target.files[0]; if(!file) return;
+  const rows = parseCsv((await file.text()).replace(/^﻿/, ""));
+  const head = rows.shift() || [];
+  const [i, f, v] = ["item_id", "field", "value"].map(n => head.indexOf(n));
+  if(i < 0 || f < 0 || v < 0){ $("doneMsg").textContent = "That file isn't a decisions CSV."; return; }
+  let n = 0;
+  const known = new Set(ITEMS.map(it => it.id));
+  rows.forEach(r => { if(known.has(r[i])){ decisions[r[i]] = decisions[r[i]] || {}; decisions[r[i]][r[f]] = r[v] || ""; n++; } });
+  e.target.value = ""; $("doneMsg").textContent = "Restored " + n + " decisions."; showDone();
+});
+document.addEventListener("keydown", e => {
+  if($("code").hidden || e.target.tagName === "SELECT") return;
+  if(e.key === "ArrowRight" || e.key === "Enter"){ e.preventDefault(); $("next").click(); }
+  if(e.key === "ArrowLeft") move(-1);
+});
+document.addEventListener("visibilitychange", () => { if(document.visibilityState === "hidden") persist(); });
+</script>

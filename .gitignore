@@ -1,0 +1,32 @@
+.env
+.env.*
+!.env.example
+node_modules/
+dist/
+build/
+.venv/
+data/
+__pycache__/
+*.py[cod]
+*.log
+*.tmp
+
+# Data layers: nothing crawled goes into git; files are shared through the team's Teams folder (D-018)
+data/raw/
+data/interim/
+data/processed/
+data/sample/
+
+# Python tooling
+.venv/
+__pycache__/
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Office lock files left while a document is open
+~$*
+
+# Local data bundle shared outside Git
+data.zip
+# Other groups' sample decks kept for reference only
+historical_reports/Public Infrastructure, Social Media Sentiment, and Real Estate Price Dynamics in Urban Vietnam.pdf

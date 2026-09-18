@@ -1,0 +1,4 @@
+case_window_id,start_utc,end_utc,anchor_event_id,scope_status,purpose
+AU_LEGISLATION,2024-11-10,2025-01-11,,core,H2 legislation comparison
+UK_ENFORCEMENT_CLUSTER,2025-06-14,2025-08-26,E2,core,UK enforcement case window
+AU_IMPLEMENTATION,2025-11-10,2026-01-11,E3,core,H2 implementation comparison

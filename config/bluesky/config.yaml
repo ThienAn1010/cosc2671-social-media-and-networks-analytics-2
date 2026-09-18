@@ -1,0 +1,269 @@
+# Everything tuned frequently lives here, not in the code.
+# Change a query or a date and re-run -- no code edits.
+#
+# Every number below that is described as "measured" comes from the probe run
+# on 2026-09-13. See docs/probe_findings.md for the full output.
+
+# --- Search queries ---------------------------------------------------------
+# Two deliberately separate strata, and the split is the single most important
+# methodological decision in this file.
+#
+# WHY: the project's headline deliverable is "which frames dominate the debate,
+# and how does frame share move over time". If the query list itself contains
+# frame words -- "surveillance", "privacy", "censorship" -- then frame share is
+# measuring the query list, not the discourse. Querying "privacy" and then
+# reporting that the privacy frame is prevalent is circular.
+#
+# So: STRATUM A names no frame. It contains statutes, institutions, and the
+# mechanism itself. Whatever people choose to say about age verification is
+# what comes back, and frame analysis rests on this stratum ALONE.
+#
+# STRATUM B is frame- and bypass-flavoured, and is KNOWN BIASED BY DESIGN. It
+# exists to guarantee coverage of the privacy and circumvention conversations
+# so they can be studied, not to measure how common they are.
+#
+# `query_matched` is recorded per post, so the two strata stay separable all
+# the way through analysis. The difference between them is measurable rather
+# than assumed.
+queries:
+  stratum_a:
+    # Measured precision (share of returned posts containing any policy term),
+    # on both event days and quiet days. A query only belongs here if it stays
+    # clean when volume spikes.
+    - "age verification"    # 86-92%. The backbone. 414 posts on a QUIET day,
+                            # 1,429 on UK enforcement day.
+    - "social media ban"    # 73-84%. Added after measurement: 1,621 posts on
+                            # the AU under-16 ban day, nearly 3x what
+                            # "under-16 ban" alone returns for the same event.
+    - "verify your age"     # 85-93%. Low volume (7-110/day) but clean, and it
+                            # catches the second-person phrasing people use
+                            # when describing being age-gated themselves --
+                            # register the noun-phrase queries miss.
+    - "Online Safety Act"   # The UK statute. Dominated by E2 as expected.
+    - "under-16 ban"        # The AU policy. Dominated by E3 as expected.
+    - "age assurance"       # The industry/regulator term of art. Low volume
+                            # but it is what Ofcom and eSafety actually say.
+    - "Ofcom"               # UK regulator.
+    - "eSafety"             # AU regulator.
+
+  stratum_b:
+    - "age check"           # DEMOTED from stratum A on measurement: 52%
+                            # precision on an event day, 25% on a quiet day.
+                            # Catches "age vibe check" and generic tech-news
+                            # tagging. Kept only as a biased supplement --
+                            # a backbone query this noisy would corrupt the
+                            # denominator of every share statistic.
+    - "age verification VPN"
+    - "age verification privacy"
+    - "porn ID check"       # Very low volume (mean 1.6/day). Kept because it
+                            # is the only query targeting the specific
+                            # "upload your ID to watch porn" conversation, and
+                            # 546 cells is cheap insurance against missing it.
+
+# REJECTED after measurement, recorded so the decision is visible rather than
+# merely absent:
+#   "age gate"    18-65% precision. Matches "Stone Age Gate" (a game), "Torii
+#                 Gate", and similar. Volume was negligible anyway (11-23/day).
+#   "digital ID"  24-41% precision. Conceptually relevant to the privacy frame,
+#                 but it pulls in unrelated digital-identity discourse and film
+#                 titles ("Now You See Me"). The noise is not worth the recall.
+
+# --- Baseline / denominator queries -----------------------------------------
+# THE PROBLEM THIS SOLVES: Bluesky's own activity level is not constant across
+# an 18-month window, so a rise in raw age-verification post counts may be the
+# platform changing rather than the topic growing. Any interrupted time series
+# or lead-lag analysis run on raw counts would be partly measuring Bluesky.
+#
+# Measured across the window, these everyday terms DECLINE: "coffee" falls from
+# 7,502/day (Jan 2025) to 4,445/day (Jul 2026), "tired" from 6,319 to 4,583.
+# So general English chatter fell while this topic rose -- which means raw
+# counts UNDERSTATE the real increase. The correction matters in both
+# directions, and without it the headline timing result is attackable in one
+# sentence.
+#
+# Selection criteria, both measured:
+#   1. Must not saturate. `hits_total` is capped at 10,000 by the server, so a
+#      high-frequency term returns the cap instead of a count and is useless as
+#      a denominator. REJECTED for this reason: "music" (10,000 every month),
+#      "movie" (10,000), "sleep" (hits 10,000 in Jul 2025).
+#   2. Must be stable. The figure in brackets is max/min across seven sampled
+#      months -- lower is better. Seasonal terms are excluded even when they
+#      do not saturate: "weather" (1.59) and "garden" (1.52) both track real
+#      seasonal cycles that would leak into the denominator.
+#
+# Only `hits_total` is recorded for these -- the posts themselves are never
+# collected. One request per (term, day) instead of full pagination.
+baseline_queries:
+  - "cooking"      # 1.17 -- most stable term measured
+  - "dinner"       # 1.30
+  - "breakfast"    # 1.47
+  - "tired"        # 1.47
+  - "coffee"       # 1.69, and the clearest downward trend, which is exactly
+                   # the platform-drift signal the basket exists to capture
+
+# --- Collection window ------------------------------------------------------
+# date_start: the proposal's window opens here. VERIFIED REACHABLE -- the probe
+#   paginated topic queries to exhaustion on early-2025 days and got small,
+#   precise, uncapped counts back (see docs/probe_findings.md Q1). The thin
+#   pre-enforcement volume is a real quiet period, not an index that ran out:
+#   it jumps around (320 -> 16 -> 15 -> 31 -> 92 -> 4) the way a news-driven
+#   topic does, rather than decaying smoothly toward zero the way a failing
+#   index would.
+#
+# date_end: DELIBERATELY LATER THAN THE PROPOSAL'S June 2026.
+#   The proposal was written expecting collection during the window. We are
+#   collecting in September 2026, so two extra months of post-enforcement data
+#   are available for free. Collecting them now and clipping later costs one
+#   line of analysis code; NOT collecting them costs a re-run at a point where
+#   more posts will have been deleted. Raw is unrepeatable; analysis is not.
+#
+#   ANALYSIS MUST CLIP TO WHATEVER WINDOW THE TEAM AGREES ACROSS SOURCES. A
+#   cross-source comparison over two different time periods is not a
+#   comparison. Flag this at the next team sync.
+date_start: "2025-01-01"
+date_end: "2026-08-31"
+
+# --- Event calendar ---------------------------------------------------------
+# The spine of every downstream analysis. Dates here do NOT affect collection
+# (the backfill is continuous and event-agnostic); they exist so the whole team
+# works from one calendar rather than three sets of private notes.
+#
+# `kind` matters for identification: enforcement events should move behaviour,
+# announcement events should move discourse only. If the analysis finds
+# behavioural surges after announcements as large as after enforcement, the
+# identification is broken. That is a built-in placebo test, not decoration.
+# --- Events ------------------------------------------------------------------
+# REMOVED. The event calendar is shared: `config/events.csv`, owned by Duy and
+# read through `src.shared.events`. Keeping a second copy here let the two drift
+# -- ours had E5 at 2026-03-11 flagged "DATE UNVERIFIED" while the shared
+# calendar has 2026-03-09 with a primary source. The shared file also carries
+# `role` (treatment/placebo) and `control_jurisdiction`, which this workstream
+# had no equivalent for and which the event analysis needs.
+
+enrich:
+  min_reply_count: 3          # Below this, a thread's replies are rarely worth
+                              # a request ("nice", "lol").
+  depth: 2                    # 1 = direct replies only. 2 also captures
+                              # reply-to-reply, where arguments actually
+                              # develop -- and an argument is a graph edge.
+  max_replies_per_thread: 200 # Safety valve against a single megathread
+                              # dominating the corpus and the graph.
+
+# --- Author profiles (third collection pass) --------------------------------
+# WHY THIS EXISTS: Bluesky has no country field anywhere. Measured over 6,699
+# distinct authors, the two free signals are far too sparse to carry a
+# jurisdiction split -- country-TLD handles reach 1.5% of authors, and regional
+# language tags 11 posts in 8,438. The profile record has no location field
+# either. Bio text (present for 24 of 25 sampled authors) and the follow graph
+# are the only viable routes left.
+#
+# The team has deliberately deferred HOW jurisdiction will be assigned to
+# analysis time. That deferral is only safe if collection preserves the raw
+# material for every option -- and profiles are not in the search payload, so
+# skipping this pass closes the option permanently.
+profiles:
+  batch_size: 25              # app.bsky.actor.getProfiles accepts 25 actors
+                              # per call. One request per 25 authors.
+
+# --- Follow graph (fourth collection pass) ----------------------------------
+# WHAT THIS IS FOR: the reply graph records who ARGUED with whom, which is a
+# record of conflict as much as of affinity -- two people who despise each
+# other produce a dense reply edge. The follow graph records who chose to
+# LISTEN to whom, which is the durable tie. For the question of whether
+# privacy-advocacy and child-safety communities are structurally segregated or
+# actually talk to each other, both are needed: segregated follow structure
+# with heavy cross-community replies is a very different world from segregated
+# both ways, and only the pair can tell them apart.
+#
+# `getFollows` is used rather than `getFollowers` deliberately. Following is an
+# act the user chose; being followed is not, and a popular account's follower
+# list is unbounded (millions) while its follow list is not.
+follows:
+  # Seed set: authors with at least this many posts in the corpus. Measured on
+  # the first ~108,000 rows: >=3 posts selects 14% of authors but covers 48% of
+  # all rows, which is the usual heavy-tailed shape. Casual one-post accounts
+  # are excluded because a single post is not participation in a community, and
+  # they would triple the cost for edges that mostly dangle.
+  min_posts: 3
+
+  # Hard cap on seeds, taken as the most active authors first. Cost scales
+  # linearly with this and nothing else does, so it is the dial to turn if the
+  # pass has to fit in a shorter window.
+  max_seeds: 5000
+
+  # MEASURED, AND THE MOST IMPORTANT NUMBER HERE. Follow counts among active
+  # authors are savagely skewed: median 133, mean 3,647, p99 23,123, and the
+  # largest account sampled follows 540,838. Uncapped, that is a mean of 37
+  # requests per user -- roughly 34 hours for 5,000 seeds, dominated entirely
+  # by a handful of accounts.
+  #
+  #     cap 1,000 -> 4.0 requests/user, 21% of users truncated
+  #     cap 2,000 -> 5.6 requests/user, 12% truncated
+  #     cap 5,000 -> 7.6 requests/user,  4% truncated
+  #
+  # 2,000 is chosen as the knee. But the cap is not only cost control, and this
+  # is the part worth defending in the writeup: an account following half a
+  # million others is an aggregator or a bot, not a participant in a community.
+  # Its edges are noise in any community-detection run, and including them
+  # would smear the very structure the analysis is trying to find. Truncating
+  # the tail improves the graph as well as affording it.
+  #
+  # The bias this introduces is recorded per seed (`truncated`, and the
+  # reported `follows_count` alongside what was actually collected) so it can
+  # be measured rather than assumed. `getFollows` returns most-recent-first, so
+  # a truncated seed keeps its recent follows and loses its old ones.
+  max_follows_per_user: 2000
+
+# --- Paths (relative to the project root) -----------------------------------
+paths:
+  # `raw_dir` holds POST-SHAPED RECORDS ONLY -- posts_*.jsonl from search and
+  # thread_*.jsonl from reply enrichment. That is load-bearing, not tidiness:
+  # `iter_raw_records()` globs every *.jsonl in the directory and hands them to
+  # callers that assume a {"_meta", "post"} envelope. A baseline count row or a
+  # profile row sitting in here would crash the enrichment pass. Hence the
+  # separate directories below.
+  raw_dir: "data/raw/bluesky"
+  checkpoint: "data/raw/bluesky/_checkpoint.json"
+  enrich_checkpoint: "data/raw/bluesky/_enrich_checkpoint.json"
+  profiles_dir: "data/raw/profiles"
+  profile_checkpoint: "data/raw/profiles/_checkpoint.json"
+  follows_dir: "data/raw/follows"
+  follows_checkpoint: "data/raw/follows/_checkpoint.json"
+  baseline_path: "data/raw/baseline/daily_counts.jsonl"
+  baseline_checkpoint: "data/raw/baseline/_checkpoint.json"
+  # Normalisation emits a SET of tables (posts, post_query, thread_edges,
+  # authors), not one file, because the raw layer holds a many-to-many
+  # relation that cannot be flattened without either losing the per-query
+  # series or multiplying every post by how many queries matched it.
+  interim_dir: "data/interim"
+  processed: "data/processed/bluesky_clean.parquet"
+  figures: "figures"
+
+# --- Request pacing ---------------------------------------------------------
+# Bluesky allows 3000 requests / 5 min per IP = 10 requests/second. A1 measured
+# ~0.30s of network time per request on this connection, so a 0.05s sleep gives
+# ~2.9 req/s -- 3.5x under the limit, with the 429 backoff in src/platforms/bluesky/api.py as
+# the real safety net.
+sleep_seconds: 0.05
+
+# Max pages per (query, day) cell before giving up. Hitting this cap IS
+# truncation -- pagination stopped before the result set did -- so the collector
+# logs it loudly. Silent truncation is indistinguishable from a quiet day.
+#
+# WAS 40, RAISED TO 200 MID-COLLECTION. The original value was sized from the
+# probe's busiest measured cell ("social media ban" on the AU ban day, 1,621
+# posts / 17 pages) with what looked like 2.5x headroom. It was not enough:
+# "age verification" on 2025-07-11 truncated at the 40-page cap, and paginating
+# that cell to exhaustion took 49 pages / 4,664 posts.
+#
+# The lesson is about what sizing from event days misses. The probe sampled
+# POLICY events, because those are the days the research is about. But the
+# largest cell in the corpus so far is not a policy event at all -- it is a
+# viral meme (see docs/probe_findings.md). Volume spikes driven by things
+# outside the event calendar are exactly the ones no amount of event-based
+# sizing will anticipate, so the cap now carries 4x headroom over the largest
+# cell actually observed rather than the largest one predicted.
+#
+# The cap costs nothing on ordinary cells -- pagination stops when the cursor
+# runs out, not when the cap is reached.
+max_pages_per_cell: 200

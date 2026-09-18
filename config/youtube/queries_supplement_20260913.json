@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "note": "Supplementary discovery queries added 2026-09-13 after the first pass yielded only 6 relevant E5 and 7 relevant E4 videos (decision D-013). Decided from video counts and titles only, before any comment content or outcome data was examined.",
+  "defaults": {
+    "type": "video",
+    "order": "viewCount",
+    "relevanceLanguage": "en",
+    "maxResults": 50
+  },
+  "scopes": ["region", "global"],
+  "events": {
+    "E4": {
+      "region": "GB",
+      "queries": [
+        {"query_id": "E4-q4", "q": "House of Lords amendment VPN under 18"},
+        {"query_id": "E4-q5", "q": "Lords vote social media ban January 2026"},
+        {"query_id": "E4-q6", "q": "UK under 16 social media ban Lords"}
+      ]
+    },
+    "E5": {
+      "region": "AU",
+      "queries": [
+        {"query_id": "E5-q6", "q": "Australia age verification porn sites"},
+        {"query_id": "E5-q7", "q": "eSafety codes age checks March 2026"},
+        {"query_id": "E5-q8", "q": "Australia age assurance search engines"},
+        {"query_id": "E5-q9", "q": "Australia adult websites age check VPN"},
+        {"query_id": "E5-q10", "q": "Australia age verification R18+ games chatbots"}
+      ]
+    }
+  }
+}

@@ -1,0 +1,12 @@
+# Bluesky workstream (owner: Hung).
+# atproto: the AT Protocol SDK; Bluesky has no third-party API worth using.
+atproto==0.0.72
+# pyyaml: reads config/bluesky/config.yaml (queries, window, pacing).
+pyyaml==6.0.3
+# langdetect: language resolution at normalisation. NOT lingua, which the
+# YouTube and Reddit workstreams use -- see docs/bluesky/frame_validation.md.
+# Bluesky posts carry a client-set `langs` tag that reports the user's interface
+# language rather than the language typed, so this workstream needs a detector
+# it can run against that tag and overrule it on a measured confidence
+# threshold. Worth revisiting as a shared choice once all three pipelines land.
+langdetect==1.0.9

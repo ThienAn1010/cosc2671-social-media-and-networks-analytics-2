@@ -1,0 +1,4 @@
+# Report build (shared): reports/tools/md_to_docx.py turns the report Markdown into the Word file.
+# python-docx writes the .docx. Page counting uses Word itself (reports/tools/check_word_pages.ps1), so no package is needed for it.
+# reports/tools/make_figures.py and attention_overlap.py use matplotlib, pandas and scipy from requirements/analysis.txt.
+python-docx==1.2.0

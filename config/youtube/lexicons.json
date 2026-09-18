@@ -1,0 +1,62 @@
+{
+  "version": 1,
+  "note": "Keyword lists for screening and cleaning. bypass_terms and frame_seed_terms are WEAK PRE-TAGS only, never the final frame or sentiment label. All matching is case-insensitive substring matching.",
+  "topic_keywords": [
+    "age verification", "age verify", "verify your age", "age check", "age assurance", "age-restricted",
+    "online safety act", "ofcom", "esafety", "social media ban", "under 16", "under-16", "under 16s",
+    "minimum age", "paxton", "free speech coalition", "house of lords", "vpn", "adult content",
+    "porn", "id check", "facial age", "age estimation", "kids online safety"
+  ],
+  "channel_type_patterns": {
+    "official": [
+      "parliament", "house of lords", "house of commons", "senate", "ofcom", "esafety",
+      "government", "gov.uk", "white house", "supreme court", "department of", "prime minister"
+    ],
+    "news": [
+      "bbc", "sky news", "abc news", "7news", "9 news", "9news", "nine news", "10 news", "sbs",
+      "guardian", "cnn", "fox news", "nbc", "cbs", "itv", "channel 4 news", "lbc", "gb news",
+      "times radio", "talktv", "reuters", "al jazeera", "associated press", "bloomberg", "financial times",
+      "telegraph", "the independent", "news.com.au", "australian broadcasting", "pbs", "msnbc", "wion",
+      "dw news", "france 24", "euronews", "daily mail", "the sun", "sky news australia", "the australian",
+      "cnbc", "yahoo", "global news", "ctv", "abc australia", "news"
+    ],
+    "tech_explainer": [
+      "tech", "vpn", "privacy", "cyber", "security", "linus", "mrwhosetheboss", "hak5", "naomi brockwell",
+      "the hated one", "techlore", "rob braxman", "mental outlaw", "computer", "linux", "nerd", "geek"
+    ]
+  },
+  "bypass_terms": [
+    "vpn", "proxy", "tor browser", "change region", "change your region", "change your location",
+    "dns", "fake id", "ai face", "face filter", "use a vpn", "mullvad", "proton vpn", "protonvpn",
+    "nordvpn", "expressvpn", "surfshark", "spoof", "bypass", "workaround", "get around", "loophole"
+  ],
+  "spam_patterns": [
+    "crypto", "bitcoin", "telegram", "whatsapp", "check my channel", "subscribe to my", "giveaway",
+    "forex", "investment advice", "dm me", "earn $", "binary option"
+  ],
+  "sensitive_terms_note": "sensitive_terms and adult_platform_terms only flag a comment that also contains a URL: discussing nudes, hookup apps or Pornhub is core policy discourse for this topic, sharing links to such content is not (decision D-014).",
+  "sensitive_terms": [
+    "nude", "nudes", "sex chat", "hookup", "nsfw link"
+  ],
+  "adult_platform_terms": [
+    "onlyfans", "pornhub", "xvideos", "xhamster", "xnxx", "redtube", "brazzers"
+  ],
+  "frame_seed_terms": {
+    "child_safety": [
+      "protect children", "protect kids", "child safety", "kids safe", "minors", "groomer", "predator",
+      "parents", "harmful content", "exposed to porn", "safeguarding"
+    ],
+    "privacy_surveillance": [
+      "privacy", "surveillance", "data breach", "leak", "upload my id", "upload id", "face scan",
+      "facial scan", "digital id", "tracking", "hacked", "biometric", "personal data"
+    ],
+    "censorship_overreach": [
+      "censorship", "free speech", "authoritarian", "nanny state", "overreach", "big brother", "1984",
+      "freedom", "police state", "control the internet", "ccp", "north korea"
+    ],
+    "technical_futility": [
+      "vpn", "won't work", "wont work", "doesn't work", "doesnt work", "easily bypass", "pointless",
+      "useless", "workaround", "kids will find a way", "trivial to bypass", "security theatre"
+    ]
+  }
+}

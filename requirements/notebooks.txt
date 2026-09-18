@@ -1,0 +1,5 @@
+# Notebooks (shared): run and re-execute notebooks inside .venv; matplotlib for figures.
+ipykernel==7.3.0
+matplotlib==3.11.2
+nbconvert==7.17.1
+nbformat==5.11.1

@@ -1,0 +1,6 @@
+event_id,event_date_utc,jurisdiction,event_type,role,control_jurisdiction,name,source_url
+E1,2025-06-27,US,judicial,placebo,none,SCOTUS upholds Texas age verification law (FSC v. Paxton),https://www.supremecourt.gov/opinions/24pdf/23-1122_3e04.pdf
+E2,2025-07-25,GB,enforcement,treatment,IE,UK Online Safety Act child-safety age checks enforced,https://www.gov.uk/government/news/whats-changing-for-children-on-social-media-from-25-july-2025
+E3,2025-12-10,AU,enforcement,treatment,NZ,Australia under-16 social media minimum age takes effect,https://www.esafety.gov.au/about-us/industry-regulation/social-media-age-restrictions
+E4,2026-01-21,GB,legislative,placebo,IE,House of Lords votes under-16 age assurance and VPN age verification amendments,https://hansard.parliament.uk/Lords/2026-01-21/debates/FDF32A4B-6004-4C08-8995-EB06C45C0B65/Children%E2%80%99SWellbeingAndSchoolsBill
+E5,2026-03-09,AU,enforcement,treatment,NZ,Australia age-restricted material codes take effect,https://www.esafety.gov.au/industry/codes/faq-access-to-online-porn-and-other-adult-content

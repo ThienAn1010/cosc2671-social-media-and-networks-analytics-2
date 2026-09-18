@@ -1,0 +1,60 @@
+{
+  "version": 1,
+  "note": "Frozen query bank for the YouTube event windows. Each query runs once per scope: 'region' uses the event's regionCode, 'global' has no regionCode.",
+  "defaults": {
+    "type": "video",
+    "order": "viewCount",
+    "relevanceLanguage": "en",
+    "maxResults": 50
+  },
+  "scopes": ["region", "global"],
+  "events": {
+    "E1": {
+      "region": "US",
+      "queries": [
+        {"query_id": "E1-q1", "q": "Supreme Court age verification Texas"},
+        {"query_id": "E1-q2", "q": "Free Speech Coalition v Paxton"},
+        {"query_id": "E1-q3", "q": "age verification law Supreme Court ruling"},
+        {"query_id": "E1-q4", "q": "Texas age verification law porn sites"}
+      ]
+    },
+    "E2": {
+      "region": "GB",
+      "queries": [
+        {"query_id": "E2-q1", "q": "Online Safety Act age verification"},
+        {"query_id": "E2-q2", "q": "UK age verification VPN"},
+        {"query_id": "E2-q3", "q": "Ofcom age checks"},
+        {"query_id": "E2-q4", "q": "UK age check Reddit Discord"},
+        {"query_id": "E2-q5", "q": "Online Safety Act petition repeal"}
+      ]
+    },
+    "E3": {
+      "region": "AU",
+      "queries": [
+        {"query_id": "E3-q1", "q": "Australia social media ban under 16"},
+        {"query_id": "E3-q2", "q": "under 16 social media ban"},
+        {"query_id": "E3-q3", "q": "eSafety social media ban"},
+        {"query_id": "E3-q4", "q": "Australia teen social media ban VPN"},
+        {"query_id": "E3-q5", "q": "social media minimum age Australia"}
+      ]
+    },
+    "E4": {
+      "region": "GB",
+      "queries": [
+        {"query_id": "E4-q1", "q": "House of Lords VPN age verification"},
+        {"query_id": "E4-q2", "q": "Lords vote social media ban under 16"},
+        {"query_id": "E4-q3", "q": "UK VPN ban age verification"}
+      ]
+    },
+    "E5": {
+      "region": "AU",
+      "queries": [
+        {"query_id": "E5-q1", "q": "Australia age verification adult content"},
+        {"query_id": "E5-q2", "q": "eSafety age assurance codes"},
+        {"query_id": "E5-q3", "q": "Australia age verification VPN"},
+        {"query_id": "E5-q4", "q": "Australia age checks search engines AI chatbots"},
+        {"query_id": "E5-q5", "q": "Australia porn age verification March 2026"}
+      ]
+    }
+  }
+}

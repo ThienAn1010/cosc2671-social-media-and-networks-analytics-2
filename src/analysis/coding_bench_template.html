@@ -1,0 +1,581 @@
+<title>__TITLE__</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap">
+<style>
+:root{
+  --ground:#F5F6F8; --surface:#FFFFFF; --surface-2:#ECEEF2;
+  --ink:#1A1E26; --muted:#5B6371; --rule:#D9DCE3;
+  --accent:#2E5496; --accent-ink:#FFFFFF;
+  --f1:#2E5496; --f2:#A8324B; --f3:#12796A; --f4:#8F5A0E; --f5:#6B4AA8; --fnone:#8A919C;
+  --chip-bg:rgba(46,84,150,.08); --quote:#F0F2F6;
+  --shadow:0 1px 2px rgba(20,24,30,.07), 0 6px 18px rgba(20,24,30,.05);
+  --warn:#9A5B0B; --ok:#1F7A4D;
+  --sans:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --serif:"Newsreader",Georgia,"Times New Roman",serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#14171C; --surface:#1C2027; --surface-2:#252A33;
+    --ink:#E6E9EE; --muted:#97A0AD; --rule:#2F3540;
+    --accent:#8FB0E8; --accent-ink:#0F1520;
+    --f1:#8FB0E8; --f2:#E0798E; --f3:#3FB6A1; --f4:#D69A45; --f5:#A98BE0; --fnone:#7D8591;
+    --chip-bg:rgba(143,176,232,.12); --quote:#20252D;
+    --shadow:0 1px 2px rgba(0,0,0,.35), 0 6px 20px rgba(0,0,0,.28);
+    --warn:#E0A44A; --ok:#5CC08C;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#14171C; --surface:#1C2027; --surface-2:#252A33;
+  --ink:#E6E9EE; --muted:#97A0AD; --rule:#2F3540;
+  --accent:#8FB0E8; --accent-ink:#0F1520;
+  --f1:#8FB0E8; --f2:#E0798E; --f3:#3FB6A1; --f4:#D69A45; --f5:#A98BE0; --fnone:#7D8591;
+  --chip-bg:rgba(143,176,232,.12); --quote:#20252D;
+  --shadow:0 1px 2px rgba(0,0,0,.35), 0 6px 20px rgba(0,0,0,.28);
+  --warn:#E0A44A; --ok:#5CC08C;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--ground); color:var(--ink); font-family:var(--sans); font-size:16px; line-height:1.5; -webkit-text-size-adjust:100%}
+.wrap{max-width:720px; margin:0 auto; padding-inline:16px; padding-block:0 48px}
+[hidden]{display:none!important}
+.rail{position:sticky; top:env(safe-area-inset-top,0px); z-index:20; background:var(--ground); padding-block:12px 10px; border-bottom:1px solid var(--rule)}
+.rail-top{display:flex; align-items:baseline; gap:10px; justify-content:space-between; flex-wrap:wrap}
+.rail-name{font-size:13px; font-weight:600}
+.rail-count{font-family:var(--mono); font-size:13px; color:var(--muted); font-variant-numeric:tabular-nums}
+.bar{height:4px; background:var(--surface-2); border-radius:99px; margin-top:9px; overflow:hidden}
+.bar span{display:block; height:100%; background:var(--accent); transition:width .25s ease}
+@media (prefers-reduced-motion:reduce){.bar span{transition:none}}
+.specimen{background:var(--surface); border:1px solid var(--rule); border-radius:10px; box-shadow:var(--shadow); padding:18px; margin-top:18px}
+.eyebrow{font-family:var(--mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); margin:0 0 10px}
+.ctx{background:var(--quote); border-radius:6px; padding:9px 12px; margin:0 0 10px; font-size:14px; color:var(--muted); white-space:pre-wrap; overflow-wrap:anywhere; max-height:170px; overflow:auto}
+.ctx b{display:block; font-family:var(--mono); font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; font-weight:500; margin-bottom:3px}
+.main-text{font-family:var(--serif); font-size:19px; line-height:1.5; margin:12px 0 0; white-space:pre-wrap; overflow-wrap:anywhere; max-height:420px; overflow:auto}
+.main-label{font-family:var(--mono); font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--accent); margin:14px 0 0}
+fieldset{border:0; padding:0; margin:20px 0 0; min-width:0}
+legend{font-size:12px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); margin-bottom:8px; padding:0}
+legend small{text-transform:none; letter-spacing:0; font-weight:400}
+.seg{display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:8px}
+.opt{font:inherit; font-size:14px; font-weight:500; cursor:pointer; text-align:left; border:1px solid var(--rule); border-radius:8px; background:var(--surface); color:var(--ink); padding:9px 11px; min-height:46px; line-height:1.25}
+.opt small{display:block; color:var(--muted); font-weight:400; font-size:12px; margin-top:2px}
+.opt kbd{float:right; font-family:var(--mono); font-size:11px; color:var(--muted)}
+.opt:hover{background:var(--surface-2)}
+.opt:focus-visible,.frame:focus-visible,.btn:focus-visible,.jump button:focus-visible,textarea:focus-visible,input:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+.opt[aria-pressed="true"]{border-color:var(--accent); background:var(--chip-bg); box-shadow:inset 0 0 0 1px var(--accent)}
+.frames{display:flex; flex-direction:column; gap:7px}
+.frame{display:flex; align-items:flex-start; gap:12px; width:100%; text-align:left; background:var(--surface); color:var(--ink); font:inherit; cursor:pointer; border:1px solid var(--rule); border-left:4px solid var(--fc,var(--rule)); border-radius:8px; padding:9px 13px; min-height:48px}
+.frame:hover{background:var(--surface-2)}
+.frame[aria-pressed="true"]{background:var(--chip-bg); border-color:var(--fc)}
+.frame.none{border-left-style:dashed}
+.tick{flex:0 0 22px; width:22px; height:22px; border-radius:5px; margin-top:1px; border:1.5px solid var(--rule); display:grid; place-items:center; font-size:14px; line-height:1; color:#fff}
+.frame[aria-pressed="true"] .tick{background:var(--fc); border-color:var(--fc)}
+.frame[aria-pressed="true"] .tick::after{content:"✓"}
+.f-name{display:block; font-weight:600; font-size:15px}
+.f-name kbd{font-family:var(--mono); font-size:11px; color:var(--muted); font-weight:400; margin-left:6px}
+.f-hint{display:block; font-size:13px; color:var(--muted); line-height:1.35; margin-top:2px}
+textarea{width:100%; font:inherit; font-size:14px; padding:9px 11px; border-radius:8px; border:1px solid var(--rule); background:var(--surface); color:var(--ink); min-height:44px; resize:vertical}
+.nav{display:flex; gap:10px; margin-top:18px; flex-wrap:wrap}
+.btn{flex:1; font:inherit; font-weight:600; font-size:15px; cursor:pointer; border-radius:8px; padding:12px; min-height:48px; border:1px solid var(--rule); background:var(--surface); color:var(--ink)}
+.btn:hover{background:var(--surface-2)}
+.btn.primary{background:var(--accent); border-color:var(--accent); color:var(--accent-ink)}
+.btn[disabled]{opacity:.42; cursor:not-allowed}
+.btn.ghost{flex:0 0 auto; padding-inline:16px}
+.need{font-size:13px; color:var(--warn); margin-top:10px; min-height:18px}
+.note{font-size:13px; color:var(--muted); margin-top:12px; line-height:1.45}
+.save{font-family:var(--mono); font-size:11.5px; color:var(--muted); letter-spacing:.03em; margin-top:8px; min-height:16px}
+details.book{margin-top:22px; border:1px solid var(--rule); border-radius:8px; background:var(--surface)}
+details.book>summary{cursor:pointer; padding:12px 15px; font-weight:600; font-size:14px}
+.book-body{padding:0 15px 16px; font-size:13.5px; line-height:1.5; color:var(--muted)}
+.book-body p{margin:.6em 0}
+.book-body strong{color:var(--ink)}
+.book-body table{border-collapse:collapse; font-size:12.5px; margin:.4em 0}
+.book-body td{border-top:1px solid var(--rule); padding:4px 8px 4px 0; vertical-align:top}
+.panel{background:var(--surface); border:1px solid var(--rule); border-radius:10px; box-shadow:var(--shadow); padding:22px 18px; margin-top:22px}
+h1{font-family:var(--serif); font-size:28px; line-height:1.2; margin:0 0 6px; text-wrap:balance; font-weight:500}
+h2{font-size:15px; margin:18px 0 8px}
+.sub{color:var(--muted); font-size:14.5px; margin:0 0 18px}
+.facts{display:flex; border:1px solid var(--rule); border-radius:8px; overflow:hidden; margin-bottom:20px}
+.fact{flex:1; padding:12px 8px; text-align:center; border-right:1px solid var(--rule)}
+.fact:last-child{border-right:0}
+.fact b{display:block; font-family:var(--mono); font-size:18px; font-variant-numeric:tabular-nums}
+.fact span{font-size:11px; color:var(--muted); letter-spacing:.05em; text-transform:uppercase}
+.who{display:flex; gap:8px; flex-wrap:wrap}
+.who .opt{flex:1; min-width:120px; text-align:center; font-size:15px}
+label.fld{display:block; font-size:13px; font-weight:600; margin-bottom:6px}
+input[type=text]{width:100%; font:inherit; padding:12px; border-radius:8px; border:1px solid var(--rule); background:var(--ground); color:var(--ink); min-height:48px}
+.sets{display:flex; flex-direction:column; gap:6px; margin:4px 0 12px}
+.setrow{display:flex; align-items:center; gap:10px; font-size:14px}
+.setrow .name{flex:1}
+.setrow .num{font-family:var(--mono); font-size:12.5px; color:var(--muted); font-variant-numeric:tabular-nums}
+.setrow .btn{flex:0 0 auto; min-height:36px; padding:6px 12px; font-size:13px}
+.jump{display:flex; flex-wrap:wrap; gap:4px; margin:0 0 16px; max-height:180px; overflow:auto}
+.jump button{font:12px var(--mono); padding:0 6px; height:28px; border-radius:5px; border:1px solid var(--rule); background:var(--surface); color:var(--warn); cursor:pointer}
+.okmsg{color:var(--ok)}
+.file{display:none}
+</style>
+
+<div class="wrap">
+  <section id="start">
+    <div class="panel">
+      <h1 id="title"></h1>
+      <p class="sub" id="subtitle"></p>
+      <div class="facts" id="facts"></div>
+      <div id="pickFixed" hidden>
+        <label class="fld">Who's coding?</label>
+        <div class="who" id="whoOpts"></div>
+      </div>
+      <div id="pickFree" hidden>
+        <label class="fld" for="coder">Your name</label>
+        <input type="text" id="coder" placeholder="e.g. kien" autocomplete="off" autocapitalize="none" spellcheck="false">
+      </div>
+      <p class="note" id="storeNote"></p>
+      <div class="nav"><button class="btn primary" id="begin" type="button">Start coding</button></div>
+      <div class="save" id="startSave"></div>
+    </div>
+    <details class="book"><summary>How to code (read this first)</summary><div class="book-body" id="bookStart"></div></details>
+  </section>
+
+  <section id="code" hidden>
+    <div class="rail">
+      <div class="rail-top"><span class="rail-name" id="who"></span><span class="rail-count" id="count"></span></div>
+      <div class="bar"><span id="barFill" style="width:0%"></span></div>
+    </div>
+    <article class="specimen">
+      <p class="eyebrow" id="eyebrow"></p>
+      <div id="rootBox" class="ctx"><b id="rootLabel">Thread opening</b><span id="rootText"></span></div>
+      <div id="parentBox" class="ctx"><b>Replying to</b><span id="parentText"></span></div>
+      <p class="main-label" id="mainLabel">Code this</p>
+      <p class="main-text" id="mainText"></p>
+    </article>
+    <div id="fields"></div>
+    <fieldset>
+      <legend>Note <small>(optional: ambiguity or a data problem)</small></legend>
+      <textarea id="noteBox" rows="1" placeholder="e.g. sarcasm unclear"></textarea>
+    </fieldset>
+    <div class="nav">
+      <button class="btn ghost" id="prev" type="button" aria-label="Previous item">←</button>
+      <button class="btn primary" id="next" type="button">Next</button>
+      <button class="btn ghost" id="toSummary" type="button">Save and pause</button>
+    </div>
+    <div class="need" id="need" role="status"></div>
+    <div class="save" id="saveMsg"></div>
+    <details class="book"><summary>Codebook and keyboard shortcuts</summary><div class="book-body" id="bookCode"></div></details>
+  </section>
+
+  <section id="done" hidden>
+    <div class="panel">
+      <h1 id="doneTitle"></h1>
+      <p class="sub" id="doneSub"></p>
+      <div class="sets" id="sets"></div>
+      <div class="jump" id="jump"></div>
+      <div class="nav">
+        <button class="btn primary" id="download" type="button">Download my labels (CSV)</button>
+        <button class="btn" id="copy" type="button">Copy labels</button>
+      </div>
+      <div class="nav">
+        <button class="btn" id="back" type="button">Back to coding</button>
+        <button class="btn" id="restore" type="button">Restore from a CSV</button>
+        <input class="file" type="file" id="restoreFile" accept=".csv,text/csv">
+      </div>
+      <p class="save" id="doneMsg"></p>
+      <p class="note" id="returnNote"></p>
+    </div>
+  </section>
+</div>
+
+<script>
+const CONFIG = __CONFIG__;
+const ITEMS_ALL = __ITEMS__;
+
+const DOC_FIELDS = [
+  {key:"relevance", label:"1. Relevance", opts:[
+    {key:"relevant", name:"Relevant", hint:"Directly about age checks or the named policy", kbd:"1"},
+    {key:"adjacent_contextual", name:"Adjacent", hint:"Related background, not the policy itself", kbd:"2"},
+    {key:"irrelevant", name:"Irrelevant", hint:"Unrelated, spam, keyword only", kbd:"3"}]},
+  {key:"language", label:"2. Language", opts:[
+    {key:"english", name:"English", kbd:"Q"},
+    {key:"mixed", name:"Mixed", kbd:"W"},
+    {key:"non_english", name:"Not English", kbd:"E"},
+    {key:"too_short_ambiguous", name:"Too short to tell", hint:"Emoji, link only, garbled", kbd:"R"}]},
+  {key:"target_policy", label:"3. Policy discussed", opts:[
+    {key:"UK_OSA", name:"UK Online Safety Act", kbd:"A"},
+    {key:"AU_SOCIAL_MINIMUM_AGE", name:"Australia under-16 ban", kbd:"S"},
+    {key:"OTHER_EXTENDED_EVENT", name:"Another age policy", hint:"US states, EU, KOSA…", kbd:"D"},
+    {key:"multiple", name:"Several", hint:"Two or more discussed", kbd:"F"},
+    {key:"unclear", name:"Unclear", hint:"Can't tell from the text", kbd:"G"}]}
+];
+const FRAMES = [
+  {key:"policy_assurance", name:"Policy and assurance", hint:"What the rule or age check is, how it works, rollout.", c:"var(--f1)", kbd:"Z"},
+  {key:"child_safety", name:"Child safety", hint:"Protecting children, harmful content, parents' role.", c:"var(--f2)", kbd:"X"},
+  {key:"privacy_surveillance", name:"Privacy and surveillance", hint:"ID uploads, face scans, data leaks, tracking, anonymity.", c:"var(--f3)", kbd:"C"},
+  {key:"governance_platform_responsibility", name:"Governance and responsibility", hint:"Who enforces, fines, regulators, platform or government duty.", c:"var(--f4)", kbd:"V"},
+  {key:"circumvention_censorship_autonomy", name:"Circumvention, censorship, autonomy", hint:"Getting around it as an argument, censorship, overreach, whether it can work.", c:"var(--f5)", kbd:"B"}
+];
+const NONE = {key:"none", name:"No frame", hint:"No frame is clearly supported. Can't be combined.", c:"var(--fnone)", kbd:"N"};
+const THREAD_FIELDS = [
+  {key:"thread_relevant", label:"Is this thread about age checks or an age policy?", opts:[
+    {key:"yes", name:"Yes", hint:"The thread's topic is age assurance, age verification or one of the policies", kbd:"Y"},
+    {key:"no", name:"No", hint:"Unrelated topic that only mentions a keyword, or no usable text", kbd:"N"}]}
+];
+
+const DOC_BOOK = `
+<p><strong>Label the current author only.</strong> Read the thread opening and the post it replies to only to understand what the author means. Don't use outside knowledge, links or usernames.</p>
+<p><strong>Relevance.</strong> <em>Relevant</em> means the author directly discusses age checks, age verification, a named age policy or a direct consequence of one. <em>Adjacent</em> is related background (online safety, privacy, speech, regulation) that doesn't touch the policy. <em>Irrelevant</em> is unrelated, spam or keyword-only. One matching word isn't enough for Relevant.</p>
+<p><strong>Language.</strong> Use <em>Too short to tell</em> only for emoji-only, link-only or garbled text, not for short but clear English.</p>
+<p><strong>Policy discussed.</strong> Pick the main policy. Use the reply context to identify it, but not the platform, date or subreddit. If you can't tell, pick <em>Unclear</em>.</p>
+<p><strong>Frames.</strong> Tick every frame the author clearly uses, not ones you'd have to infer. A bare VPN mention isn't circumvention unless it's part of an argument about getting around the rule or whether it can work. Mentioning the under-16 ban is policy and assurance; add child safety only when protecting children is invoked. Choose <em>No frame</em> for jokes, insults, reactions and off-topic text.</p>
+<p><strong>Irrelevant items.</strong> Picking Irrelevant fills in Unclear and No frame for you. Change them if needed.</p>
+<p><strong>Keys.</strong> Relevance 1 2 3 · Language Q W E R · Policy A S D F G · Frames Z X C V B, no frame N · Enter for next · ← for previous. Keys are off while typing a note.</p>`;
+const THREAD_BOOK = `
+<p><strong>Judge the thread, not single comments.</strong> You see the thread's title and opening text. Choose <em>Yes</em> when the thread is about age checks, age verification, the UK Online Safety Act, Australia's under-16 ban or a similar age rule, including news about how they're enforced.</p>
+<p>Choose <em>No</em> when the thread is about something else and only mentions a keyword (for example "age" or "VPN" in another sense), or when there's no usable text. Link-only openings with a policy title count as Yes.</p>
+<p><strong>Keys.</strong> Y or N saves and moves on · ← for previous.</p>`;
+
+const $ = id => document.getElementById(id);
+const isThreads = CONFIG.kind === "threads";
+const FIELDS = isThreads ? THREAD_FIELDS : DOC_FIELDS;
+const LABEL_COLUMNS = isThreads ? ["thread_relevant", "notes"] : ["relevance", "language", "target_policy", "frame_labels", "notes"];
+let ITEMS = ITEMS_ALL, coder = "", idx = 0, codes = {}, dbDoc = null, saveTimer = null, dbState = "connecting", downloads = null;
+
+$("title").textContent = CONFIG.title;
+document.title = CONFIG.title;
+$("subtitle").textContent = CONFIG.subtitle;
+$("bookStart").innerHTML = isThreads ? THREAD_BOOK : DOC_BOOK;
+$("bookCode").innerHTML = isThreads ? THREAD_BOOK : DOC_BOOK;
+
+/* Storage: localStorage is written on every change. On a published page the db copy also syncs,
+   so work moves between devices and the coordinator can read it. Neither ever holds text. */
+const LS = k => "bench:" + CONFIG.store + ":" + k;
+function lsSave(){ try{ localStorage.setItem(LS(coder), JSON.stringify({codes, idx, t:Date.now()})); }catch(e){} }
+function lsLoad(name){ try{ return JSON.parse(localStorage.getItem(LS(name)) || "null"); }catch(e){ return null; } }
+const hosted = !!(window.claude && typeof window.claude.use === "function");
+const dbReady = (async () => {
+  if(!hosted){ dbState = "local"; return null; }
+  try{
+    const db = await window.claude.use("db");
+    dbState = db ? "ready" : "local";
+    try{ downloads = await window.claude.use("downloads"); }catch(e){ downloads = null; }
+    return db;
+  }catch(e){ dbState = "local"; return null; }
+})();
+$("storeNote").textContent = hosted
+  ? "Labels save as you go and sync to this page, so you can stop and continue on any device with the same name. Code on your own; don't discuss items until both sets are in."
+  : "Labels save in this browser as you go. Use the same browser to continue, and download your CSV at the end of every session as a backup. Code on your own; don't discuss items until both sets are in.";
+
+function statusText(){
+  if(dbState === "ready") return "saved and synced";
+  if(dbState === "connecting") return "saved in this browser (syncing)";
+  return "saved in this browser";
+}
+function flag(msg){ $("saveMsg").textContent = msg || statusText(); }
+function blank(){ return isThreads ? {thread_relevant:"", notes:""} : {relevance:"", language:"", target_policy:"", f:[], notes:""}; }
+function complete(c){
+  if(!c) return false;
+  if(isThreads) return !!c.thread_relevant;
+  return !!(c.relevance && c.language && c.target_policy && c.f && c.f.length);
+}
+function nComplete(){ return ITEMS.filter(i => complete(codes[i.id])).length; }
+function queueSave(){ lsSave(); clearTimeout(saveTimer); saveTimer = setTimeout(pushToDb, 1200); flag(); }
+async function pushToDb(){
+  clearTimeout(saveTimer);
+  const db = await dbReady;
+  if(!db || !coder) return;
+  try{
+    if(!dbDoc) dbDoc = db.doc("coding/" + coder);
+    await dbDoc.set({coder, codes, idx, updated:new Date().toISOString(), n_coded:nComplete(), n_items:ITEMS.length});
+    dbState = "ready";
+  }catch(e){ if(e && e.code === "not_granted") dbState = "local"; }
+  flag();
+}
+async function mergeFromDb(){
+  const db = await dbReady;
+  if(!db || !coder){ flag(); return; }
+  try{
+    dbDoc = db.doc("coding/" + coder);
+    const snap = await dbDoc.get();
+    const remote = snap.exists ? snap.data() : null;
+    if(remote && remote.codes){
+      const hadNone = !Object.keys(codes).length;
+      let added = 0;
+      for(const [k, v] of Object.entries(remote.codes)){ if(!(k in codes)){ codes[k] = v; added++; } }
+      if(added){
+        if(hadNone) idx = Math.min(remote.idx || 0, ITEMS.length - 1);
+        lsSave(); paint(); flag("restored " + added + " from your other device");
+        setTimeout(() => flag(), 2500);
+        return;
+      }
+    }
+  }catch(e){}
+  flag();
+}
+
+function cur(){ const id = ITEMS[idx].id; return codes[id] || (codes[id] = blank()); }
+function build(){
+  const host = $("fields"); host.innerHTML = "";
+  FIELDS.forEach(field => {
+    const fs = document.createElement("fieldset");
+    const lg = document.createElement("legend"); lg.textContent = field.label; fs.appendChild(lg);
+    const seg = document.createElement("div"); seg.className = "seg"; fs.appendChild(seg);
+    field.opts.forEach(o => {
+      const b = document.createElement("button");
+      b.type = "button"; b.className = "opt"; b.id = "opt-" + field.key + "-" + o.key;
+      b.setAttribute("aria-pressed", "false");
+      if(o.kbd){ const k = document.createElement("kbd"); k.textContent = o.kbd; b.appendChild(k); }
+      b.appendChild(document.createTextNode(o.name));
+      if(o.hint){ const s = document.createElement("small"); s.textContent = o.hint; b.appendChild(s); }
+      b.addEventListener("click", () => choose(field.key, o.key));
+      seg.appendChild(b);
+    });
+    host.appendChild(fs);
+  });
+  if(isThreads) return;
+  const fs = document.createElement("fieldset");
+  fs.innerHTML = '<legend>4. Frames the author uses <small>(tick all that apply)</small></legend><div class="frames" id="frames"></div>';
+  host.appendChild(fs);
+  [...FRAMES, NONE].forEach(f => {
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "frame" + (f.key === "none" ? " none" : ""); b.id = "frame-" + f.key;
+    b.style.setProperty("--fc", f.c);
+    b.setAttribute("aria-pressed", "false");
+    b.innerHTML = '<span class="tick" aria-hidden="true"></span><span><span class="f-name"></span><span class="f-hint"></span></span>';
+    b.querySelector(".f-name").textContent = f.name;
+    const k = document.createElement("kbd"); k.textContent = f.kbd; b.querySelector(".f-name").appendChild(k);
+    b.querySelector(".f-hint").textContent = f.hint;
+    b.addEventListener("click", () => toggleFrame(f.key));
+    $("frames").appendChild(b);
+  });
+}
+function choose(field, value){
+  const c = cur();
+  c[field] = value;
+  if(field === "relevance" && value === "irrelevant"){
+    if(!c.target_policy) c.target_policy = "unclear";
+    if(!c.f.length) c.f = ["none"];
+  }
+  paint(); queueSave();
+  if(isThreads) setTimeout(advance, 120);
+}
+function toggleFrame(key){
+  const c = cur();
+  let set = new Set(c.f);
+  if(key === "none"){ set = set.has("none") ? new Set() : new Set(["none"]); }
+  else { set.delete("none"); if(set.has(key)) set.delete(key); else set.add(key); }
+  c.f = [...FRAMES.map(f => f.key), "none"].filter(k => set.has(k));
+  paint(); queueSave();
+}
+function setName(s){ return (CONFIG.sets && CONFIG.sets[s]) || s || ""; }
+function paint(){
+  const it = ITEMS[idx], c = codes[it.id] || blank();
+  $("eyebrow").textContent = it.id + (it.s ? " · " + setName(it.s) : "");
+  const root = it.r || "", parent = it.p || "";
+  $("rootBox").hidden = isThreads || !root || root === it.t;
+  $("rootLabel").textContent = CONFIG.rootLabel || "Thread opening";
+  $("rootText").textContent = root;
+  $("parentBox").hidden = isThreads || !parent || parent === root;
+  $("parentText").textContent = parent;
+  $("mainLabel").textContent = isThreads ? "Thread title and opening" : "Code this";
+  $("mainText").textContent = it.t || "(no text)";
+  $("count").textContent = (idx + 1) + " / " + ITEMS.length + " · " + nComplete() + " done";
+  $("barFill").style.width = (100 * nComplete() / ITEMS.length) + "%";
+  FIELDS.forEach(field => field.opts.forEach(o => $("opt-" + field.key + "-" + o.key).setAttribute("aria-pressed", String(c[field.key] === o.key))));
+  if(!isThreads) [...FRAMES.map(f => f.key), "none"].forEach(k => $("frame-" + k).setAttribute("aria-pressed", String(c.f.includes(k))));
+  $("noteBox").value = c.notes || "";
+  $("prev").disabled = idx === 0;
+  $("next").textContent = idx === ITEMS.length - 1 ? "Finish" : "Next";
+  $("need").textContent = "";
+}
+function missing(c){
+  const m = [];
+  if(isThreads){ if(!c.thread_relevant) m.push("yes or no"); return m; }
+  if(!c.relevance) m.push("relevance");
+  if(!c.language) m.push("language");
+  if(!c.target_policy) m.push("policy");
+  if(!c.f.length) m.push("a frame or No frame");
+  return m;
+}
+function advance(){
+  const m = missing(cur());
+  if(m.length){ $("need").textContent = "Still needed: " + m.join(", ") + "."; return; }
+  if(idx === ITEMS.length - 1){ lsSave(); showDone(); return; }
+  idx++; paint(); queueSave(); window.scrollTo(0, 0);
+}
+function back(){ if(idx > 0){ idx--; paint(); queueSave(); window.scrollTo(0, 0); } }
+
+function csvCell(v){ v = String(v == null ? "" : v); return /[",\n\r]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; }
+function exportRow(it){
+  const c = codes[it.id] || blank();
+  if(isThreads) return [it.id, c.thread_relevant, c.notes];
+  const none = c.f.includes("none");
+  const frames = c.f.filter(k => k !== "none").join("|");
+  let notes = c.notes || "";
+  if(none) notes = notes ? "no_supported_frame; " + notes : "no_supported_frame";
+  return [it.id, c.relevance, c.language, c.target_policy, frames, notes];
+}
+function toCsv(){
+  return [["item_id", ...LABEL_COLUMNS, "coder"].join(",")].concat(ITEMS.map(it => [...exportRow(it), coder].map(csvCell).join(","))).join("\r\n") + "\r\n";
+}
+function fileName(){ return CONFIG.store + "_" + coder + "_labels.csv"; }
+
+function parseCsv(text){
+  const rows = []; let row = [], cell = "", q = false;
+  for(let i = 0; i < text.length; i++){
+    const ch = text[i];
+    if(q){ if(ch === '"'){ if(text[i + 1] === '"'){ cell += '"'; i++; } else q = false; } else cell += ch; }
+    else if(ch === '"') q = true;
+    else if(ch === ","){ row.push(cell); cell = ""; }
+    else if(ch === "\n" || ch === "\r"){ if(ch === "\r" && text[i + 1] === "\n") i++; row.push(cell); rows.push(row); row = []; cell = ""; }
+    else cell += ch;
+  }
+  if(cell || row.length){ row.push(cell); rows.push(row); }
+  return rows.filter(r => r.some(v => v !== ""));
+}
+function restoreFrom(text){
+  const rows = parseCsv(text.replace(/^﻿/, ""));
+  const head = rows.shift() || [];
+  const at = name => head.indexOf(name);
+  if(at("item_id") < 0) return "That file has no item_id column.";
+  const known = new Set(ITEMS.map(i => i.id));
+  let n = 0;
+  rows.forEach(r => {
+    const id = r[at("item_id")];
+    if(!known.has(id)) return;
+    const c = blank();
+    if(isThreads){ c.thread_relevant = r[at("thread_relevant")] || ""; c.notes = r[at("notes")] || ""; }
+    else{
+      c.relevance = r[at("relevance")] || ""; c.language = r[at("language")] || ""; c.target_policy = r[at("target_policy")] || "";
+      const fr = (r[at("frame_labels")] || "").split("|").filter(Boolean);
+      let notes = r[at("notes")] || "";
+      if(!fr.length && notes.startsWith("no_supported_frame")){ fr.push("none"); notes = notes.replace(/^no_supported_frame(; )?/, ""); }
+      c.f = fr; c.notes = notes;
+    }
+    if(Object.values(c).some(v => v && v.length)){ codes[id] = c; n++; }
+  });
+  lsSave(); pushToDb();
+  return "Restored " + n + " items.";
+}
+
+function showDone(){
+  $("code").hidden = true; $("done").hidden = false;
+  const left = ITEMS.filter(i => !complete(codes[i.id]));
+  $("doneTitle").textContent = left.length ? left.length + " of " + ITEMS.length + " still to code" : "All " + ITEMS.length + " coded";
+  $("doneSub").textContent = left.length ? "Pick up where you left off, or tap an id below." : "Coded by " + coder + ". Download your labels and send them back.";
+  const sets = $("sets"); sets.innerHTML = "";
+  const names = [...new Set(ITEMS.map(i => i.s || ""))];
+  names.forEach(s => {
+    const mine = ITEMS.filter(i => (i.s || "") === s);
+    const done = mine.filter(i => complete(codes[i.id])).length;
+    const row = document.createElement("div"); row.className = "setrow";
+    const nm = document.createElement("span"); nm.className = "name"; nm.textContent = s ? setName(s) : "All items";
+    const num = document.createElement("span"); num.className = "num"; num.textContent = done + " / " + mine.length;
+    row.append(nm, num);
+    const next = mine.find(i => !complete(codes[i.id]));
+    if(next){
+      const b = document.createElement("button"); b.type = "button"; b.className = "btn"; b.textContent = done ? "Continue" : "Start";
+      b.addEventListener("click", () => openAt(next));
+      row.appendChild(b);
+    }
+    sets.appendChild(row);
+  });
+  const jump = $("jump"); jump.innerHTML = "";
+  left.slice(0, 400).forEach(i => {
+    const b = document.createElement("button"); b.type = "button"; b.textContent = i.id;
+    b.addEventListener("click", () => openAt(i));
+    jump.appendChild(b);
+  });
+  $("returnNote").textContent = CONFIG.returnNote;
+  pushToDb();
+  window.scrollTo(0, 0);
+}
+function openAt(item){ idx = ITEMS.indexOf(item); $("done").hidden = true; $("code").hidden = false; paint(); window.scrollTo(0, 0); }
+
+async function download(){
+  const csv = toCsv();
+  if(hosted){
+    await dbReady;
+    if(downloads){
+      try{ await downloads.save({filename:fileName(), data:csv}); $("doneMsg").textContent = "Download offered."; return; }
+      catch(e){ $("doneMsg").textContent = "Download was declined. Use Copy labels instead."; return; }
+    }
+    $("doneMsg").textContent = "Downloads aren't available here. Use Copy labels; your labels are also saved to this page.";
+    return;
+  }
+  const url = URL.createObjectURL(new Blob(["﻿" + csv], {type:"text/csv"}));
+  const a = document.createElement("a"); a.href = url; a.download = fileName();
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 4000);
+  $("doneMsg").textContent = "Saved " + fileName() + " to your downloads folder.";
+}
+
+function startCoding(name){
+  coder = name;
+  ITEMS = CONFIG.assigned ? ITEMS_ALL.filter(i => i.a === coder) : ITEMS_ALL;
+  if(!ITEMS.length){ $("startSave").textContent = "No items are assigned to " + coder + "."; return; }
+  const local = lsLoad(coder);
+  if(local){ codes = local.codes || {}; idx = Math.min(local.idx || 0, ITEMS.length - 1); }
+  try{ localStorage.setItem(LS("last"), coder); }catch(e){}
+  $("who").textContent = coder + " · " + CONFIG.short;
+  $("start").hidden = true;
+  build(); mergeFromDb();
+  if(nComplete()) showDone();
+  else { $("code").hidden = false; paint(); flag(); }
+}
+function facts(){
+  const f = $("facts"); f.innerHTML = "";
+  CONFIG.facts.forEach(([v, k]) => { const d = document.createElement("div"); d.className = "fact"; const b = document.createElement("b"); b.textContent = v; const s = document.createElement("span"); s.textContent = k; d.append(b, s); f.appendChild(d); });
+}
+facts();
+let picked = "";
+if(CONFIG.coders && CONFIG.coders.length){
+  $("pickFixed").hidden = false;
+  CONFIG.coders.forEach(([key, label]) => {
+    const b = document.createElement("button"); b.type = "button"; b.className = "opt"; b.id = "who-" + key; b.textContent = label;
+    b.setAttribute("aria-pressed", "false");
+    b.addEventListener("click", () => { picked = key; CONFIG.coders.forEach(([k]) => $("who-" + k).setAttribute("aria-pressed", String(k === key))); resumeHint(key); });
+    $("whoOpts").appendChild(b);
+  });
+}else $("pickFree").hidden = false;
+function resumeHint(name){
+  const prev = lsLoad(name);
+  const n = prev && prev.codes ? Object.values(prev.codes).filter(complete).length : 0;
+  $("begin").textContent = n ? "Resume coding" : "Start coding";
+  $("startSave").textContent = n ? n + " already coded in this browser." : "";
+}
+$("begin").addEventListener("click", () => {
+  const raw = CONFIG.coders && CONFIG.coders.length ? picked : $("coder").value.trim();
+  if(!raw){ $("startSave").textContent = "Choose who's coding first."; return; }
+  startCoding(raw.toLowerCase().replace(/[^a-z0-9_-]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 40) || "coder");
+});
+$("next").addEventListener("click", advance);
+$("prev").addEventListener("click", back);
+$("toSummary").addEventListener("click", () => { lsSave(); showDone(); });
+$("back").addEventListener("click", () => { $("done").hidden = true; $("code").hidden = false; paint(); });
+$("download").addEventListener("click", download);
+$("copy").addEventListener("click", async () => {
+  try{ await navigator.clipboard.writeText(toCsv()); $("doneMsg").textContent = "Copied. Paste it into a new file named " + fileName() + "."; }
+  catch(e){ $("doneMsg").textContent = "Copy was blocked by the browser. Use Download instead."; }
+});
+$("restore").addEventListener("click", () => $("restoreFile").click());
+$("restoreFile").addEventListener("change", async e => {
+  const file = e.target.files[0]; if(!file) return;
+  $("doneMsg").textContent = restoreFrom(await file.text());
+  e.target.value = ""; showDone();
+});
+$("noteBox").addEventListener("input", () => { cur().notes = $("noteBox").value; queueSave(); });
+document.addEventListener("keydown", e => {
+  if($("code").hidden || e.ctrlKey || e.metaKey || e.altKey) return;
+  if(e.target && (e.target.tagName === "TEXTAREA" || e.target.tagName === "INPUT")) return;
+  const k = e.key.toUpperCase();
+  if(e.key === "Enter"){ e.preventDefault(); advance(); return; }
+  if(e.key === "ArrowLeft"){ back(); return; }
+  for(const field of FIELDS){ const o = field.opts.find(o => o.kbd === k); if(o){ e.preventDefault(); choose(field.key, o.key); return; } }
+  if(!isThreads){ const f = [...FRAMES, NONE].find(f => f.kbd === k); if(f){ e.preventDefault(); toggleFrame(f.key); } }
+});
+document.addEventListener("visibilitychange", () => { if(document.visibilityState === "hidden"){ lsSave(); pushToDb(); } });
+try{
+  const last = localStorage.getItem(LS("last"));
+  if(last){
+    if(CONFIG.coders && CONFIG.coders.length){ const btn = $("who-" + last); if(btn) btn.click(); }
+    else { $("coder").value = last; resumeHint(last); }
+  }
+}catch(e){}
+</script>

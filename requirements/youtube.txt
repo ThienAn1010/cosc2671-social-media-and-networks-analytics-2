@@ -1,0 +1,8 @@
+# YouTube workstream (owner: Kien). HTTP uses the standard library, so no API client package is needed.
+# lingua: same language detector as the Reddit pipeline, so English filtering is consistent across platforms.
+lingua-language-detector==2.2.0
+# ftfy + emoji: repair mojibake and keep emoji metadata before sentiment scoring.
+ftfy==6.3.1
+emoji==2.15.0
+# networkx: network-readiness summary of the reply graph (task Y8).
+networkx==3.6.1
