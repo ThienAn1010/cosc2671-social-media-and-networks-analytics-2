@@ -36,6 +36,10 @@ access note for this submission is
 restricted OneDrive URL remains in the Canvas submission rather than being
 published in this repository.
 
+For a compressed Canvas code submission, use the matching filename
+`s3825455_PG_group_1.zip`.  The GitHub repository keeps the more descriptive
+course/project slug shown in the access note.
+
 The representative sample is separate from the code repository and is supplied
 through the OneDrive/Canvas data submission.  The frozen working copy contains
 `data/sample/` at approximately 3.9 MB, below the 10 MB limit:

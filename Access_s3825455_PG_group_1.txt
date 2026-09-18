@@ -9,6 +9,9 @@ Code repository
 Public GitHub repository:
 https://github.com/ThienAn1010/cosc2671-social-media-and-networks-analytics-2
 
+Canvas compressed-code filename:
+s3825455_PG_group_1.zip
+
 Use the latest commit on the `main` branch for marking.  The repository
 contains the Python source, notebooks, tests, configuration, requirements and
 README instructions.  It intentionally does not contain the restricted full
