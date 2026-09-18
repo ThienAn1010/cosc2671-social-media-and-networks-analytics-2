@@ -312,6 +312,14 @@ The report-facing outputs remove raw text and direct identifiers. See `data/anal
 
 Run from the repository root and use `.venv/bin/python`. Recreate the environment from `requirements.txt` if a pinned package or spaCy model is missing.
 
+### NLTK reports a proxied-fetch security error
+
+Some managed networks proxy the NLTK download endpoint. NLTK blocks that request unless the proxy is explicitly trusted. If the lecturer trusts the network proxy, rerun the resource download with the opt-in below; otherwise use an unproxied network:
+
+```bash
+NLTK_ALLOW_PROXIED_URLOPEN=1 .venv/bin/python -c 'import nltk; nltk.download("stopwords"); nltk.download("vader_lexicon")'
+```
+
 ### A validator says data is missing
 
 The data directories are intentionally outside Git. Download the approved frozen bundle from the OneDrive link in the Canvas submission and extract it at the repository root so paths such as `data/analysis/report/report_manifest.json`, `data/analysis/fallback/analysis_manifest.json` and `data/processed/youtube/documents.parquet` exist. Do not substitute live downloads or partial pilot data.
